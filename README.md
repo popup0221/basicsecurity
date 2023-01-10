@@ -1,3 +1,3 @@
 # core-spring-security
 
-# spring secutiry 학습 기록
+spring secutiry 학습 기록
