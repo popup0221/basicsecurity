@@ -23,8 +23,11 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // 인가정책
         http
-                .authorizeRequests() // 요청에대한 보안검사 시작
-                .anyRequest().authenticated(); // 어떠한 요청이든 인증을 받음
+                // 요청에대한 보안검사 시작
+                .authorizeHttpRequests(
+                        authorizationManagerRequestMatcherRegistry ->
+                        anyRequest().authenticated() // 어떠한 요청이든 인증을 받음
+                );
 
         // 인증정책
         http
