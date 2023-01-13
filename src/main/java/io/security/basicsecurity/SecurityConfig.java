@@ -28,6 +28,8 @@ public class SecurityConfig {
     * ===============================================================================
     */
 
+    // FilterChainProxy에 configurer 등록
+
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // 인가정책
@@ -51,7 +53,7 @@ public class SecurityConfig {
                     @Override
                     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
                         System.out.println("authentication : " + authentication.getName());
-                        response.sendRedirect("/");
+                        response.sendRedirect("/main");
                     }
                 })
                 .failureHandler(new AuthenticationFailureHandler() { // 로그인 실패 후 핸들러
