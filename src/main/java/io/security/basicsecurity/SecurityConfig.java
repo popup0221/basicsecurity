@@ -43,7 +43,7 @@ public class SecurityConfig {
         // 인증정책
         http
                 /**
-                 * Authenticateion Api - FormLogin
+                 * Authenticateion Api - FormLogin(폼 로그인 방식)
                  * 1. login request
                  * 2. UsernamePassWordAuthenticationFilter
                  * 3. AntPathRequestMatcher(/loginURL)에서 요청 경로가 매칭되는지 확인
@@ -56,28 +56,26 @@ public class SecurityConfig {
                  * 7. 생성한 Authentication 객체를 {SecurityContext}에 저장 -> Session
                  * 8. SuccessHandler 실행 또는 {defaultSuccessUrl}로 리턴
                  */
-                .formLogin() // 폼 로그인 방식
-//                .loginPage("/loginPage") // 사용자 정의 로그인 페이지
-//                .defaultSuccessUrl("/") // 로그인 성공 후 이동 페이지
-//                .failureUrl("/login") // 로그인 실패 후 이동 페이지
-                .usernameParameter("userId") // 아이디 파라미터명 설정
-                .passwordParameter("pwd") // 패스워드 파라미터명 설정
-                .loginProcessingUrl("/login-process") // 로그인 Form Action URL
-                .successHandler(new AuthenticationSuccessHandler() { // 로그인 성공 후 핸들러
-                    @Override
-                    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-                        System.out.println("authentication : " + authentication.getName());
-                        response.sendRedirect("/main");
-                    }
-                })
-                .failureHandler(new AuthenticationFailureHandler() { // 로그인 실패 후 핸들러
-                    @Override
-                    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-                        System.out.println("exception : " + exception.getMessage());
-                        response.sendRedirect("/login");
-                    }
-                })
-                .permitAll(); // 로그인 URL -> 모든인증 허용
+                .formLogin(httpSecurityFormLoginConfigurer -> {
+                    // 로그인 성공 후 핸들러
+                    // 로그인 실패 후 핸들러
+                    httpSecurityFormLoginConfigurer
+                            .loginPage("/loginPage") // 사용자 정의 로그인 페이지
+                            .defaultSuccessUrl("/") // 로그인 성공 후 이동 페이지
+                            .failureUrl("/login") // 로그인 실패 후 이동 페이지
+                            .usernameParameter("userId") // 아이디 파라미터명 설정
+                            .passwordParameter("pwd") // 패스워드 파라미터명 설정
+                            .loginProcessingUrl("/login-process") // 로그인 Form Action URL
+                            .successHandler((request, response, authentication) -> {
+                                System.out.println("authentication : " + authentication.getName());
+                                response.sendRedirect("/main");
+                            })
+                            .failureHandler((request, response, exception) -> {
+                                System.out.println("exception : " + exception.getMessage());
+                                response.sendRedirect("/login");
+                            })
+                            .permitAll(); // 로그인 URL -> 모든인증 허용
+                });
 
         return http.build();
     }
