@@ -16,6 +16,7 @@ import java.io.IOException;
 
 @Configuration
 public class SecurityConfig {
+
    /*
     * ===============================================================================
     * issue - deprecated WebSecurityConfigurerAdapter
@@ -29,7 +30,6 @@ public class SecurityConfig {
     */
 
     // FilterChainProxy에 configurer 등록
-
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // 인가정책
@@ -42,6 +42,20 @@ public class SecurityConfig {
 
         // 인증정책
         http
+                /**
+                 * Authenticateion Api - FormLogin
+                 * 1. login request
+                 * 2. UsernamePassWordAuthenticationFilter
+                 * 3. AntPathRequestMatcher(/loginURL)에서 요청 경로가 매칭되는지 확인
+                 * 4. Y -> Authentication(username + password) 생성 후 {AuthenticationManager}에 전달
+                 *    N -> next filter chain.doFilter
+                 * 5. {AuthenticationManager}는 {AuthenticationProvider}에 인증처리 위임
+                 * 6. AuthenticationProvider
+                 *      인증성공 -> {AuthenticationManager}에서 Authentication(User객체 + Authorities(권한 정보)) 생성
+                 *      인증실패 -> AuthenticationException 발생, failureHandler 실행 또는 {failureUrl}로 리턴
+                 * 7. 생성한 Authentication 객체를 {SecurityContext}에 저장 -> Session
+                 * 8. SuccessHandler 실행 또는 {defaultSuccessUrl}로 리턴
+                 */
                 .formLogin() // 폼 로그인 방식
 //                .loginPage("/loginPage") // 사용자 정의 로그인 페이지
 //                .defaultSuccessUrl("/") // 로그인 성공 후 이동 페이지
@@ -67,6 +81,5 @@ public class SecurityConfig {
 
         return http.build();
     }
-
 
 }
